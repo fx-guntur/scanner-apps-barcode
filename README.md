@@ -32,20 +32,25 @@ A premium, mobile-friendly static Point of Sale (POS) application designed to be
 └── README.md              # Documentation
 ```
 
-## 🛠️ How to Deploy to GitHub Pages
+## 🛠️ How to Deploy to Vercel (Recommended)
 
-1.  **Create a Repo**: Create a new repository on GitHub (e.g., `toko-puspa-pos`).
-2.  **Upload Files**: Push all the files in this directory to your repository.
-3.  **Enable Pages**:
-    *   Go to **Settings** > **Pages**.
-    *   Select `main` branch and `/ (root)` folder.
-    *   Click **Save**.
-4.  **Use It**: Open the generated URL on your phone's browser, then select **"Add to Home Screen"** to install it.
+1.  **Login to Vercel**: Go to [vercel.com](https://vercel.com) and sign in with your GitHub account.
+2.  **Add New Project**: Click **"Add New"** > **"Project"**.
+3.  **Import Repo**: Select your `scanner-apps-barcode` repository.
+4.  **Framework Preset**: Ensure it's set to **"Other"**.
+5.  **Deploy**: Click the **Deploy** button. Vercel will provide a secure HTTPS link.
 
-## 📝 Notes
+## ⚠️ Troubleshooting
 
--   **HTTPS Required**: The barcode scanner (camera access) requires an HTTPS connection, which GitHub Pages provides automatically.
--   **Browser Storage**: Product additions and deletions are saved in the user's browser `LocalStorage`. Clearing browser cache may reset the product list to the state in `products.json`.
+### 1. `NotAllowedError: Permission denied`
+- **HTTPS is Required**: Modern browsers block camera access on non-secure (`http://`) sites. Use `https://`.
+- **Site Permissions**: Click the **lock icon** 🔒 and set **Camera** to "Allow".
+
+### 2. `NotReadableError: Could not start video source`
+- **Camera in Use**: Make sure no other apps (Zoom, Teams, etc.) or other browser tabs are using the camera.
+- **Hardware Block**: Check if your laptop has a physical privacy slider over the camera.
+- **Restart Browser**: Sometimes the hardware link gets stuck; restarting your browser or phone often fixes this.
+- **System Permissions**: Ensure your OS (Windows/Android/iOS) has given the browser app permission to use the camera.
 
 ---
 Developed with ❤️ for **Toko Puspa**.
