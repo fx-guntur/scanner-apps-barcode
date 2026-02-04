@@ -37,6 +37,7 @@ h1 {
     text-align: center;
     background: linear-gradient(to right, #818cf8, #c084fc);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 800;
 }
@@ -71,8 +72,15 @@ h1 {
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .btn {
@@ -156,7 +164,8 @@ input:focus {
     border-collapse: collapse;
 }
 
-.cart-table th, .cart-table td {
+.cart-table th,
+.cart-table td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -197,7 +206,7 @@ input:focus {
     padding: 12px 24px;
     border-radius: 50px;
     font-weight: 600;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     opacity: 0;
     transition: all 0.3s ease;
     z-index: 1000;
@@ -206,4 +215,40 @@ input:focus {
 .notification.show {
     opacity: 1;
     bottom: 40px;
+}
+
+/* Print/PDF Receipt Styles */
+.print-mode {
+    background: #fff !important;
+    color: #000 !important;
+    padding: 0 !important;
+}
+
+.print-mode .card {
+    background: #fff !important;
+    color: #000 !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+
+.print-mode h2,
+.print-mode span,
+.print-mode td,
+.print-mode th {
+    color: #000 !important;
+}
+
+.print-mode .cart-table th {
+    border-bottom: 2px solid #000 !important;
+}
+
+.print-mode .cart-table td {
+    border-bottom: 1px solid #eee !important;
+}
+
+.print-mode #total-amount {
+    color: #000 !important;
+    border-top: 2px solid #000;
+    padding-top: 10px;
 }

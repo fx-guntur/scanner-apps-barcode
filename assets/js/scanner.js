@@ -1,9 +1,9 @@
-function onScanSuccess(decodedText, decodedResult) {
+async function onScanSuccess(decodedText, decodedResult) {
     // Stop the scanner momentarily to prevent multiple scans of same item
     html5QrcodeScanner.pause();
 
     // Add to cart
-    if (addToCart(decodedText)) {
+    if (await addToCart(decodedText)) {
         // Resume after 1.5 seconds delay
         setTimeout(() => {
             html5QrcodeScanner.resume();

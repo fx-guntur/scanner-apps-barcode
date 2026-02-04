@@ -6,22 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Products - Toko Puspa</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 
 <body>
     <div class="container">
         <h1>MANAGE PRODUCTS</h1>
 
-        <div class="card">
-            <p style="margin-bottom: 15px; font-weight: 600;">Add New Product</p>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="card" id="add-product-container">
+            <p style="margin-bottom: 15px; font-weight: 600;" id="form-title">Scan Barcode to Add</p>
+
+            <!-- Step 1: Scanner Selection -->
+            <div id="scanner-step">
+                <div id="product-reader"
+                    style="width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 15px;"></div>
+                <button class="btn btn-outline" id="input-manual">Input Manual (Skip Scan)</button>
+            </div>
+
+            <!-- Step 2: Product Form (Hidden initially) -->
+            <div id="form-step" style="display: none; flex-direction: column; gap: 10px;">
                 <input type="text" id="new-barcode" placeholder="Barcode Number">
                 <input type="text" id="new-name" placeholder="Product Name">
-                <div style="display: flex; gap: 10px;">
-                    <input type="number" id="new-price" placeholder="Price (Rp)" style="flex: 2;">
-                    <input type="text" id="new-unit" placeholder="Unit (pcs/btl)" style="flex: 1;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="number" id="new-price" placeholder="Price (Rp)" style="flex: 2; min-width: 150px;">
+                    <input type="text" id="new-unit" placeholder="Unit (pcs/btl)" style="flex: 1; min-width: 80px;">
                 </div>
-                <button class="btn btn-primary" id="save-product">Add Product</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-outline" id="back-to-scan" style="flex: 1;">Back</button>
+                    <button class="btn btn-primary" id="save-product" style="flex: 2;">Save Product</button>
+                </div>
             </div>
         </div>
 
@@ -51,9 +64,20 @@
 
     <script src="assets/js/app.js"></script>
     <script>
+        let html5QrcodeScanner = null;
+
         document.addEventListener('DOMContentLoaded', async () => {
             await initProducts();
             renderProductList();
+            startProductScanner();
+
+            document.getElementById('input-manual').addEventListener('click', () => {
+                showForm('');
+            });
+
+            document.getElementById('back-to-scan').addEventListener('click', () => {
+                showScanner();
+            });
 
             document.getElementById('save-product').addEventListener('click', async () => {
                 const barcode = document.getElementById('new-barcode').value;
@@ -81,14 +105,45 @@
                 await saveProducts(productDB);
                 renderProductList();
                 showNotification("Product saved!");
-
-                // Clear inputs
-                document.getElementById('new-barcode').value = '';
-                document.getElementById('new-name').value = '';
-                document.getElementById('new-price').value = '';
-                document.getElementById('new-unit').value = '';
+                showScanner();
             });
         });
+
+        function showForm(barcode) {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+            document.getElementById('scanner-step').style.display = 'none';
+            document.getElementById('form-step').style.display = 'flex';
+            document.getElementById('form-title').innerText = barcode ? 'Fill Product Details' : 'Manual Entry';
+
+            document.getElementById('new-barcode').value = barcode;
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+            document.getElementById('new-unit').value = '';
+            document.getElementById('new-name').focus();
+        }
+
+        function showScanner() {
+            document.getElementById('scanner-step').style.display = 'block';
+            document.getElementById('form-step').style.display = 'none';
+            document.getElementById('form-title').innerText = 'Scan Barcode to Add';
+            startProductScanner();
+        }
+
+        function startProductScanner() {
+            if (html5QrcodeScanner) html5QrcodeScanner.clear();
+
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "product-reader", { fps: 10, qrbox: { width: 250, height: 150 } }
+            );
+
+            html5QrcodeScanner.render((decodedText) => {
+                showForm(decodedText);
+            }, (error) => {
+                // Ignore silent scan errors
+            });
+        }
 
         function renderProductList() {
             const container = document.getElementById('product-list-items');

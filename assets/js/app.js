@@ -58,9 +58,9 @@ function saveCart(cart) {
     localStorage.setItem('pos_cart', JSON.stringify(cart));
 }
 
-function addToCart(barcode) {
-    // Refresh DB from local storage to ensure consistency
-    initProducts();
+async function addToCart(barcode) {
+    // Refresh DB to ensure consistency
+    await initProducts();
     const product = productDB.find(p => p.barcode === barcode);
     if (!product) {
         alert("Product not found: " + barcode);
@@ -90,7 +90,30 @@ function showLastScanned(barcode) {
     container.style.display = 'block';
     document.getElementById('last-name').innerText = item.name;
     document.getElementById('last-price').innerText = formatIDR(item.price);
-    document.getElementById('last-qty').innerText = item.qty + 'x';
+
+    // Change QTY to editable input
+    const qtyContainer = document.getElementById('last-qty');
+    qtyContainer.style.background = 'none';
+    qtyContainer.style.padding = '0';
+    qtyContainer.innerHTML = `
+        <input type="number" 
+               value="${item.qty}" 
+               min="1" 
+               style="width: 50px; text-align: center; background: var(--primary); border: none; border-radius: 20px; padding: 5px; font-size: 0.8rem; color: white;" 
+               onchange="updateLastScannedQty('${barcode}', this.value)">
+    `;
+}
+
+function updateLastScannedQty(barcode, newQty) {
+    const cart = getCart();
+    const item = cart.find(i => i.barcode === barcode);
+    if (item) {
+        item.qty = parseInt(newQty) || 1;
+        saveCart(cart);
+        // If we are on the cart page, re-render it
+        if (typeof renderCart === 'function') renderCart();
+        showNotification("Quantity updated");
+    }
 }
 
 function formatIDR(amount) {
@@ -160,9 +183,9 @@ initProducts();
 // Listeners for Scan Page
 const addManualBtn = document.getElementById('add-manual');
 if (addManualBtn) {
-    addManualBtn.addEventListener('click', () => {
+    addManualBtn.addEventListener('click', async () => {
         const input = document.getElementById('barcode-input');
-        if (addToCart(input.value)) {
+        if (await addToCart(input.value)) {
             input.value = '';
         }
     });
