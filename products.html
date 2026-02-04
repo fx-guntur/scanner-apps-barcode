@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Toko Puspa</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>MANAGE PRODUCTS</h1>
+
+        <div class="card">
+            <p style="margin-bottom: 15px; font-weight: 600;">Add New Product</p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="new-barcode" placeholder="Barcode Number">
+                <input type="text" id="new-name" placeholder="Product Name">
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="new-price" placeholder="Price (Rp)" style="flex: 2;">
+                    <input type="text" id="new-unit" placeholder="Unit (pcs/btl)" style="flex: 1;">
+                </div>
+                <button class="btn btn-primary" id="save-product">Add Product</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <p style="margin-bottom: 15px; font-weight: 600;">Product List</p>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-list-items">
+                        <!-- Items injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer-actions">
+            <a href="index.html" class="btn btn-outline">Back to Scanner</a>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">Product saved!</div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProductList();
+
+            document.getElementById('save-product').addEventListener('click', () => {
+                const barcode = document.getElementById('new-barcode').value;
+                const name = document.getElementById('new-name').value;
+                const price = document.getElementById('new-price').value;
+                const unit = document.getElementById('new-unit').value;
+
+                if (!barcode || !name || !price) {
+                    alert("Please fill all required fields");
+                    return;
+                }
+
+                const products = JSON.parse(localStorage.getItem('pos_products')) || [];
+                const existingIndex = products.findIndex(p => p.barcode === barcode);
+
+                if (existingIndex > -1) {
+                    if (confirm("Barcode already exists. Update product?")) {
+                        products[existingIndex] = { barcode, name, price: parseInt(price), unit };
+                    } else {
+                        return;
+                    }
+                } else {
+                    products.push({ barcode, name, price: parseInt(price), unit });
+                }
+
+                saveProducts(products);
+                renderProductList();
+                showNotification("Product saved!");
+
+                // Clear inputs
+                document.getElementById('new-barcode').value = '';
+                document.getElementById('new-name').value = '';
+                document.getElementById('new-price').value = '';
+                document.getElementById('new-unit').value = '';
+            });
+        });
+
+        function renderProductList() {
+            const container = document.getElementById('product-list-items');
+            const products = JSON.parse(localStorage.getItem('pos_products')) || [];
+            container.innerHTML = '';
+
+            products.forEach((p, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div style="font-weight: 600;">${p.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${p.barcode} | ${formatIDR(p.price)}</div>
+                    </td>
+                    <td style="text-align: right;">
+                        <button onclick="deleteProduct(${index})" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.8rem;">Delete</button>
+                    </td>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function deleteProduct(index) {
+            if (confirm("Are you sure you want to delete this product?")) {
+                const products = JSON.parse(localStorage.getItem('pos_products')) || [];
+                products.splice(index, 1);
+                saveProducts(products);
+                renderProductList();
+                showNotification("Product deleted");
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Bill - Quick Scan POS</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <!-- html2pdf library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>BILL SUMMARY</h1>
+
+        <div class="card" id="bill-container">
+            <div class="cart-header">
+                <div>
+                    <h2 style="font-size: 1.2rem;">Toko Puspa</h2>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;" id="current-date"></p>
+                </div>
+            </div>
+
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th style="text-align: right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items">
+                    <!-- Items injected here -->
+                </tbody>
+            </table>
+
+            <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 600; color: var(--text-muted);">Grand Total</span>
+                <span id="total-amount">Rp 0</span>
+            </div>
+        </div>
+
+        <div class="footer-actions">
+            <button class="btn btn-primary" id="download-pdf">Save as PDF</button>
+            <a href="products.html" class="btn btn-outline">Manage Products</a>
+            <a href="index.html" class="btn btn-outline">Back to Scanner</a>
+            <button class="btn btn-outline" id="clear-cart"
+                style="color: var(--danger); border-color: rgba(239, 68, 68, 0.3);">Reset Cart</button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">PDF Generated!</div>
+
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/pdf.js"></script>
+    <script>
+        // Specific logic for cart page
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCart();
+            document.getElementById('current-date').innerText = new Date().toLocaleString();
+        });
+    </script>
+</body>
+
+</html>

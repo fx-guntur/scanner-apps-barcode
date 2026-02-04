@@ -1,0 +1,26 @@
+[
+  {
+    "barcode": "123456",
+    "name": "Kopi Kapal Api 165g",
+    "price": 15000,
+    "unit": "pcs"
+  },
+  {
+    "barcode": "654321",
+    "name": "Indomie Goreng",
+    "price": 3500,
+    "unit": "pcs"
+  },
+  {
+    "barcode": "8992761121011",
+    "name": "Aqua 600ml",
+    "price": 4000,
+    "unit": "bottle"
+  },
+  {
+    "barcode": "8992750000013",
+    "name": "Teh Pucuk Harum 350ml",
+    "price": 3500,
+    "unit": "bottle"
+  }
+]
