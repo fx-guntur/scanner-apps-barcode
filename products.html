@@ -51,10 +51,11 @@
 
     <script src="assets/js/app.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initProducts();
             renderProductList();
 
-            document.getElementById('save-product').addEventListener('click', () => {
+            document.getElementById('save-product').addEventListener('click', async () => {
                 const barcode = document.getElementById('new-barcode').value;
                 const name = document.getElementById('new-name').value;
                 const price = document.getElementById('new-price').value;
@@ -65,20 +66,19 @@
                     return;
                 }
 
-                const products = JSON.parse(localStorage.getItem('pos_products')) || [];
-                const existingIndex = products.findIndex(p => p.barcode === barcode);
+                const existingIndex = productDB.findIndex(p => p.barcode === barcode);
 
                 if (existingIndex > -1) {
                     if (confirm("Barcode already exists. Update product?")) {
-                        products[existingIndex] = { barcode, name, price: parseInt(price), unit };
+                        productDB[existingIndex] = { barcode, name, price: parseInt(price), unit };
                     } else {
                         return;
                     }
                 } else {
-                    products.push({ barcode, name, price: parseInt(price), unit });
+                    productDB.push({ barcode, name, price: parseInt(price), unit });
                 }
 
-                saveProducts(products);
+                await saveProducts(productDB);
                 renderProductList();
                 showNotification("Product saved!");
 
@@ -92,10 +92,9 @@
 
         function renderProductList() {
             const container = document.getElementById('product-list-items');
-            const products = JSON.parse(localStorage.getItem('pos_products')) || [];
             container.innerHTML = '';
 
-            products.forEach((p, index) => {
+            productDB.forEach((p, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>
@@ -110,11 +109,10 @@
             });
         }
 
-        function deleteProduct(index) {
+        async function deleteProduct(index) {
             if (confirm("Are you sure you want to delete this product?")) {
-                const products = JSON.parse(localStorage.getItem('pos_products')) || [];
-                products.splice(index, 1);
-                saveProducts(products);
+                productDB.splice(index, 1);
+                await saveProducts(productDB);
                 renderProductList();
                 showNotification("Product deleted");
             }

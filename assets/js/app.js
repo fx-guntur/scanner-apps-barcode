@@ -2,23 +2,52 @@
 let productDB = [];
 
 async function initProducts() {
-    const localProducts = localStorage.getItem('pos_products');
-    if (localProducts) {
-        productDB = JSON.parse(localProducts);
-    } else {
-        try {
-            const response = await fetch('assets/json/products.json');
+    // 1. Try to get from API (Vercel KV)
+    try {
+        const response = await fetch('/api/products');
+        if (response.ok) {
             productDB = await response.json();
-            saveProducts(productDB);
-        } catch (error) {
-            console.error("Failed to load initial products:", error);
+            // Update local cache
+            localStorage.setItem('pos_products', JSON.stringify(productDB));
+            console.log("Products synced from KV");
+        } else {
+            throw new Error("API response not ok");
+        }
+    } catch (error) {
+        console.warn("Failed to sync from KV, using local storage/fallback:", error);
+        // 2. Fallback to LocalStorage
+        const localProducts = localStorage.getItem('pos_products');
+        if (localProducts) {
+            productDB = JSON.parse(localProducts);
+        } else {
+            // 3. Fallback to static JSON
+            try {
+                const response = await fetch('assets/json/products.json');
+                productDB = await response.json();
+                localStorage.setItem('pos_products', JSON.stringify(productDB));
+            } catch (err) {
+                console.error("Critical: Failed to load products:", err);
+            }
         }
     }
 }
 
-function saveProducts(products) {
+async function saveProducts(products) {
     productDB = products;
+    // 1. Perspective save to LocalStorage (Immediate feedback)
     localStorage.setItem('pos_products', JSON.stringify(products));
+
+    // 2. Sync to KV API
+    try {
+        const response = await fetch('/api/products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(products)
+        });
+        if (!response.ok) console.error("API Save failed");
+    } catch (error) {
+        console.error("Failed to sync to KV:", error);
+    }
 }
 
 function getCart() {

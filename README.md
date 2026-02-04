@@ -4,12 +4,13 @@ A premium, mobile-friendly static Point of Sale (POS) application designed to be
 
 ## 🚀 Key Features
 
--   **Live Barcode Scanner**: Uses the device's camera to scan barcodes directly in the browser (powered by `html5-qrcode`).
+-   **Vercel KV Storage**: Products are now stored centrally in a database, allowing you to access the same product list from any device.
+-   **Product Catalog**: A beautiful restaurant-style menu for customers to view your products.
+-   **Live Barcode Scanner**: Uses the device's camera to scan barcodes directly in the browser.
 -   **PWA (Progressive Web App)**: Can be installed on Android, iOS, and Desktop. Supports basic offline access.
--   **Dynamic Product Management**: Add, update, or delete products directly from the UI. Data is persisted in the browser's `LocalStorage`.
+-   **Dynamic Product Management**: Add, update, or delete products directly from the UI.
 -   **Cart System**: Add scanned items to a cart, adjust quantities, and see real-time price updates.
--   **PDF Export**: Export the final bill as a professional-looking PDF (powered by `html2pdf.js`).
--   **Premium UI**: Modern dark-mode design with glassmorphism and smooth micro-animations.
+-   **PDF Export**: Export the final bill as a professional-looking PDF.
 
 ## 📦 Project Structure
 
@@ -38,7 +39,18 @@ A premium, mobile-friendly static Point of Sale (POS) application designed to be
 2.  **Add New Project**: Click **"Add New"** > **"Project"**.
 3.  **Import Repo**: Select your `scanner-apps-barcode` repository.
 4.  **Framework Preset**: Ensure it's set to **"Other"**.
-5.  **Deploy**: Click the **Deploy** button. Vercel will provide a secure HTTPS link.
+5.  **Deploy**: Click the **Deploy** button.
+6.  **Set up KV Storage (CRITICAL)**:
+    -   After deployment, go to your project dashboard on Vercel.
+    -   Click the **"Storage"** tab at the top.
+    -   Click **"Create Database"** and select **"KV (Redis)"**.
+    -   Accept the terms and click **"Create"**.
+    -   Once created, click **"Connect Project"** and select your current project.
+    -   Vercel will add environment variables (like `KV_URL`).
+    -   **Redeploy** your app (Go to "Deployments" > "Redeploy") so the app can see these new variables.
+
+## 🍽️ Catalog Page
+You can now access your product catalog at `/catalog.html`. It's designed to look like a premium restaurant menu, perfect for showing to customers.
 
 ## ⚠️ Troubleshooting
 

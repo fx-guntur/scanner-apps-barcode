@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Catalog - Toko Puspa</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        :root {
+            --menu-bg: #fff;
+            --menu-accent: #2d3436;
+        }
+
+        body {
+            background-color: #f9f9f9;
+        }
+
+        .menu-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: var(--menu-bg);
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .menu-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px double #eee;
+            padding-bottom: 20px;
+        }
+
+        .menu-header h1 {
+            font-family: 'Georgia', serif;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            color: var(--menu-accent);
+        }
+
+        .menu-header p {
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        .menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            position: relative;
+        }
+
+        .menu-item::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px dotted #ccc;
+            margin: 0 10px;
+            order: 2;
+        }
+
+        .menu-item .name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--menu-accent);
+            order: 1;
+        }
+
+        .menu-item .price {
+            font-weight: 700;
+            color: var(--primary);
+            order: 3;
+        }
+
+        .menu-item .details {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            width: 100%;
+        }
+
+        .catalog-footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 480px) {
+            .menu-container {
+                margin: 10px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="menu-container">
+        <div class="menu-header">
+            <h1>KATALOG PRODUK</h1>
+            <p>Toko Puspa - Pilihan Terbaik Untuk Anda</p>
+        </div>
+
+        <div id="catalog-list" class="menu-grid">
+            <!-- Items injected here -->
+            <div style="text-align: center; color: #999;">Loading menu...</div>
+        </div>
+
+        <div class="catalog-footer">
+            <p>Terima kasih telah berbelanja!</p>
+            <div style="margin-top: 20px;">
+                <a href="index.html" class="btn btn-outline" style="font-size: 0.8rem; padding: 5px 15px;">Back to
+                    App</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Wait for data to sync
+            await initProducts();
+            renderCatalog();
+        });
+
+        function renderCatalog() {
+            const container = document.getElementById('catalog-list');
+            const products = JSON.parse(localStorage.getItem('pos_products')) || [];
+
+            if (products.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #999;">Belum ada produk.</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            products.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'menu-item-wrapper';
+                item.innerHTML = `
+                    <div class="menu-item">
+                        <span class="name">${p.name}</span>
+                        <span class="price">${formatIDR(p.price)}</span>
+                    </div>
+                    <span class="details">${p.unit || 'pcs'} | ${p.barcode}</span>
+                    <div style="height: 15px;"></div>
+                `;
+                container.appendChild(item);
+            });
+        }
+    </script>
+</body>
+
+</html>
